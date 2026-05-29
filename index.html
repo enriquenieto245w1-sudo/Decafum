@@ -1,0 +1,221 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+.hero { background: #1a1a1a; color: #c9a84c; padding: 2rem 1.5rem; border-radius: var(--border-radius-lg); text-align: center; margin-bottom: 1.5rem; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 60% 40%, #2e2208 0%, #1a1a1a 70%); }
+.hero-content { position: relative; }
+.hero h1 { font-size: 2.5rem; font-weight: 500; letter-spacing: 0.15em; color: #c9a84c; }
+.hero p { font-size: 13px; letter-spacing: 0.25em; color: #888; margin-top: 4px; }
+.hero-sub { font-size: 12px; color: #666; margin-top: 8px; letter-spacing: 0.1em; }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.5rem; align-items: center; }
+.filter-btn { padding: 6px 16px; border-radius: 20px; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-secondary); font-size: 13px; cursor: pointer; transition: all 0.15s; }
+.filter-btn:hover { background: var(--color-background-secondary); }
+.filter-btn.active { background: #1a1a1a; color: #c9a84c; border-color: #c9a84c; }
+.search-wrap { margin-left: auto; position: relative; }
+.search-wrap input { padding: 6px 12px 6px 32px; border-radius: 20px; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-primary); font-size: 13px; width: 180px; }
+.search-wrap i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--color-text-secondary); font-size: 15px; pointer-events: none; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; }
+.card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; cursor: pointer; transition: border-color 0.15s; }
+.card:hover { border-color: #c9a84c; }
+.card-img { background: var(--color-background-secondary); height: 160px; display: flex; align-items: center; justify-content: center; position: relative; }
+.card-img i { font-size: 56px; color: #c9a84c; opacity: 0.6; }
+.gender-badge { position: absolute; top: 8px; left: 8px; font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 500; letter-spacing: 0.05em; }
+.badge-w { background: #fbeaf0; color: #993556; }
+.badge-m { background: #e6f1fb; color: #185fa5; }
+.badge-u { background: #e1f5ee; color: #0f6e56; }
+.card-body { padding: 12px; }
+.card-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; line-height: 1.3; }
+.card-brand { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 8px; }
+.card-prices { display: flex; gap: 6px; }
+.price-pill { background: var(--color-background-secondary); border-radius: 4px; padding: 3px 7px; font-size: 11px; color: var(--color-text-secondary); }
+.price-pill span { color: var(--color-text-primary); font-weight: 500; }
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--color-background-primary); border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-secondary); width: 460px; max-width: 95vw; max-height: 90vh; overflow-y: auto; }
+.modal-header { background: #1a1a1a; padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0; }
+.modal-header h2 { color: #c9a84c; font-size: 18px; font-weight: 500; }
+.modal-close { background: none; border: none; color: #888; font-size: 20px; cursor: pointer; padding: 0; line-height: 1; }
+.modal-close:hover { color: #c9a84c; }
+.modal-body { padding: 1.5rem; }
+.modal-icon { text-align: center; padding: 1.5rem 0; }
+.modal-icon i { font-size: 72px; color: #c9a84c; opacity: 0.5; }
+.modal-brand { font-size: 12px; color: var(--color-text-secondary); letter-spacing: 0.1em; margin-bottom: 4px; }
+.modal-gender { display: inline-block; margin-bottom: 12px; font-size: 11px; padding: 3px 10px; border-radius: 10px; }
+.modal-desc { font-size: 14px; color: var(--color-text-secondary); line-height: 1.6; margin-bottom: 1.25rem; }
+.modal-prices { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1.25rem; }
+.price-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px; text-align: center; border: 0.5px solid var(--color-border-tertiary); }
+.price-card .size { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 4px; }
+.price-card .amount { font-size: 18px; font-weight: 500; color: #c9a84c; }
+.price-card .unit { font-size: 11px; color: var(--color-text-secondary); }
+.notes-box { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px; font-size: 12px; color: var(--color-text-secondary); border-left: 2px solid #c9a84c; }
+.notes-box strong { color: var(--color-text-primary); display: block; margin-bottom: 4px; font-size: 12px; font-weight: 500; }
+.estuche-card { border: 1.5px solid #c9a84c; }
+.estuche-badge { position: absolute; top: 8px; right: 8px; background: #c9a84c; color: #1a1a1a; font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 500; }
+.no-results { text-align: center; padding: 3rem 1rem; color: var(--color-text-secondary); grid-column: 1/-1; }
+.loyalty-banner { background: var(--color-background-secondary); border: 0.5px solid #c9a84c44; border-radius: var(--border-radius-md); padding: 12px 16px; display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem; font-size: 13px; color: var(--color-text-secondary); }
+.loyalty-banner i { color: #c9a84c; font-size: 20px; flex-shrink: 0; }
+.loyalty-banner strong { color: var(--color-text-primary); }
+.contact-bar { background: #1a1a1a; border-radius: var(--border-radius-md); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; margin-top: 2rem; }
+.contact-bar span { color: #888; font-size: 13px; }
+.contact-bar a { color: #c9a84c; font-size: 15px; font-weight: 500; text-decoration: none; }
+</style>
+
+<h2 class="sr-only">Catálogo interactivo de Decafum — Perfumes y Decants</h2>
+
+<div class="hero">
+  <div class="hero-content">
+    <p style="letter-spacing:0.3em; font-size:11px; color:#666; margin-bottom:6px;">DERECK ARROYO</p>
+    <h1>DECAFUM</h1>
+    <p>PERFUMES & DECANTS</p>
+    <p class="hero-sub">Colecciona experiencias olfativas, no botellas caras</p>
+  </div>
+</div>
+
+<div class="loyalty-banner">
+  <i class="ti ti-gift" aria-hidden="true"></i>
+  <span><strong>Programa de lealtad:</strong> cada 5 compras recibís una regalía de 2ml gratis</span>
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" onclick="setFilter('all',this)">Todos</button>
+  <button class="filter-btn" onclick="setFilter('mujer',this)">Para mujer</button>
+  <button class="filter-btn" onclick="setFilter('hombre',this)">Para hombre</button>
+  <button class="filter-btn" onclick="setFilter('unisex',this)">Unisex</button>
+  <button class="filter-btn" onclick="setFilter('estuche',this)">Estuches</button>
+  <div class="search-wrap">
+    <i class="ti ti-search" aria-hidden="true"></i>
+    <input type="text" id="search-input" placeholder="Buscar..." oninput="renderGrid()" />
+  </div>
+</div>
+
+<div class="grid" id="product-grid"></div>
+
+<div class="contact-bar">
+  <span><i class="ti ti-brand-whatsapp" aria-hidden="true" style="vertical-align:-2px; margin-right:4px; color:#25d366;"></i> Pedidos por WhatsApp</span>
+  <a href="https://wa.me/50671267535">+506 7126-7535</a>
+</div>
+
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal" id="modal-box">
+    <div class="modal-header">
+      <h2 id="m-name">—</h2>
+      <button class="modal-close" onclick="document.getElementById('modal').classList.remove('open')" aria-label="Cerrar"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-icon"><i class="ti ti-droplet" id="m-icon"></i></div>
+      <div id="m-brand" class="modal-brand"></div>
+      <div id="m-gender-badge" class="modal-gender"></div>
+      <p id="m-desc" class="modal-desc"></p>
+      <div class="modal-prices" id="m-prices"></div>
+      <div class="notes-box" id="m-notes" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const products = [
+  { id:1, name:'Set Estuche 4 piezas', brand:'Armaf / inspirado en Scandal JPG', gender:'estuche', desc:'Set de 4 piezas con fragancia magnética del momento. Un aroma adictivo a mandarina jugosa, caramelo tostado y maderas ambaradas que proyecta puro éxito, elegancia y seducción.', price5:null, price10:null, priceSpecial:'₡35.000', icon:'ti-box', notes:'Incluye shower gel, body spray y más. Inspirado en Scandal de Jean Paul Gaultier.' },
+  { id:2, name:'Good Girl Very', brand:'Carolina Herrera', gender:'mujer', desc:'Una explosión de tentación frutal y elegancia. Con notas vibrantes de grosella roja, lichi y una adictiva base de vainilla. El perfume perfecto para la mujer atrevida, sexy y moderna.', price5:6000, price10:10500, icon:'ti-heart' },
+  { id:3, name:'Gaultier Divine', brand:'Jean Paul Gaultier', gender:'mujer', desc:'Un perfume sofisticado que celebra la feminidad con una cautivadora mezcla de notas florales, marinas y un toque dulce de merengue. Su icónico frasco dorado con corsé de curvas majestuosas lo convierte en joya de la alta perfumería.', price5:4000, price10:10500, icon:'ti-heart' },
+  { id:4, name:'Light Blue', brand:'Dolce & Gabbana', gender:'mujer', desc:'Una fragancia icónica y refrescante que evoca la alegría del verano mediterráneo con notas de limón siciliano, manzana verde y cedro. Fresca, ligera y revitalizante.', price5:4000, price10:7000, icon:'ti-heart' },
+  { id:5, name:'Odyssey Sand / Candy', brand:'Armaf', gender:'mujer', desc:'Una fragancia irresistible y coqueta que envuelve los sentidos con notas dulces, florales y frutales inspiradas en un mundo de golosinas. Para mujeres divertidas que buscan un aroma alegre, dulce y juvenil.', price5:4000, price10:7000, icon:'ti-heart' },
+  { id:6, name:'Club de Nuit Untold', brand:'Armaf', gender:'unisex', desc:'Una fragancia lujosa y cautivadora con opulenta mezcla de azafrán, jazmín y maderas ambaradas. Con su espectacular botella tornasol, es un aroma sofisticado, unisex y de gran estela.', price5:5000, price10:8500, icon:'ti-droplet' },
+  { id:7, name:'Reme Picomanele', brand:'MP Parfums', gender:'mujer', desc:'Una fragancia vibrante y elegante que cautiva con románticas notas florales y un fondo cálido sumamente femenino. Su textura en relieve y llamativo color rosa la convierten en opción sofisticada y seductora.', price5:4000, price10:7000, icon:'ti-heart' },
+  { id:8, name:'Eros Flame', brand:'Versace', gender:'hombre', desc:'Fragancia masculina intensa y apasionada. Contrasta la frescura de cítricos italianos con la calidez de pimienta negra, romero y maderas nobles. Su imponente frasco rojo con la Medusa encarna fuerza, deseo y sensualidad.', price5:5000, price10:8500, icon:'ti-flame' },
+  { id:9, name:'Eros Eau de Parfum', brand:'Versace', gender:'hombre', desc:'Fragancia magnética y seductora que fusiona la frescura de menta y manzana verde con la calidez adictiva de haba tonka y ámbar. Su icónico frasco azul turquesa con la Medusa evoca el poder y la pasión de la mitología griega.', price5:5000, price10:8500, icon:'ti-flame' },
+  { id:10, name:"L'Eau d'Issey Pour Homme", brand:'Issey Miyake', gender:'hombre', desc:'Fragancia clásica y atemporal que destaca por su frescura cítrica y acuática, liderada por notas de yuzú, sándalo y especias. Elegante, limpio y lleno de serenidad.', price5:4000, price10:7000, icon:'ti-flame' },
+  { id:11, name:'Light Blue Pour Homme', brand:'Dolce & Gabbana', gender:'hombre', desc:'La esencia de la frescura mediterránea. Una fragancia icónica, magnética y refrescante para el hombre moderno que disfruta de la libertad. Captura la energía del mar de Sicilia.', price5:4000, price10:7000, icon:'ti-flame' },
+  { id:12, name:'Sauvage Eau de Parfum', brand:'Dior', gender:'hombre', desc:'Poderoso, misterioso y profundamente sensual. Equilibra una frescura extrema con notas nocturnas y sensuales. La fragancia del hombre audaz, elegante y magnético.', price5:6000, price10:10500, icon:'ti-flame' },
+  { id:13, name:'Born in Roma Uomo', brand:'Valentino', gender:'hombre', desc:'La máxima expresión de la elegancia moderna con actitud urbana. Inspirada en la cultura callejera de Roma, mezcla frescura mineral vibrante con sofisticación de alta costura.', price5:6000, price10:10500, icon:'ti-flame' },
+  { id:14, name:'9 PM', brand:'Afnan', gender:'hombre', desc:'La definición de seducción nocturna y energía fiestera. Una fragancia magnética, dulce y profundamente adictiva. Combina una salida frutal jugosa con un fondo cálido y ultra sensual.', price5:3000, price10:5500, icon:'ti-moon' },
+  { id:15, name:'9 AM Dive', brand:'Afnan', gender:'hombre', desc:'La dosis perfecta de frescura, energía y vitalidad para iniciar el día. Fragancia refrescante, marina y sumamente vibrante. Combina salida cítrica chispeante con un fondo amaderado limpio.', price5:3000, price10:3500, icon:'ti-sun' },
+  { id:16, name:'Club de Nuit Intense Man', brand:'Armaf', gender:'hombre', desc:'El aroma del éxito, la sofisticación y el poder. Diseñada para el hombre decidido que busca proyectar una presencia fuerte y elegante. Salida cítrica brillante que evoluciona hacia un cuerpo ahumado y profundamente masculino.', price5:4000, price10:7000, icon:'ti-flame' },
+  { id:17, name:'Odyssey Mega', brand:'Armaf', gender:'hombre', desc:'Energía desbordante, frescura y sofisticación moderna. Fragancia vibrante, limpia y profundamente atractiva para el hombre contemporáneo y activo.', price5:3000, price10:5500, icon:'ti-bolt' },
+  { id:18, name:'Odyssey Aqua', brand:'Armaf', gender:'hombre', desc:'Frescura acuática extrema con un toque de pura seducción. Diseñada para evocar la brisa marina y la energía del océano, con apertura cítrica helada y fondo amaderado dulce.', price5:3000, price10:3500, icon:'ti-droplet' },
+  { id:19, name:'Odyssey Mandarin Sky', brand:'Armaf', gender:'hombre', desc:'Una explosión cítrica caramelizada que redefine la seducción. Fragancia vibrante, dulce y sumamente magnética. Abre con frescura jugosa de mandarina que se envuelve en notas de caramelo y haba tonka.', price5:4000, price10:7000, icon:'ti-bolt' },
+  { id:20, name:'Bharara King', brand:'Bharara Beauty', gender:'hombre', desc:'El aroma del poder, la opulencia y la conquista. Fragancia imponente, ultra sofisticada y sumamente adictiva. Abre con explosión de frutas tropicales y cítricos que se fusionan con un fondo dulce y ambarado.', price5:6500, price10:11500, icon:'ti-crown' },
+  { id:21, name:'Stallion 53', brand:'Lattafa', gender:'hombre', desc:'Elegancia minimalista, mística y sofisticación alternativa. Fragancia de nicho para quienes buscan distanciarse de lo comercial. Maderas ricas, acordes ahumados y un toque de cuero suave.', price5:7500, price10:13500, icon:'ti-crown' },
+  { id:22, name:'Khamrah Qahwa', brand:'Lattafa', gender:'hombre', desc:'Una obra maestra gourmand. Rica, opulenta y profundamente adictiva, eleva el ADN del Khamrah original con una nota magistral de café arábigo. Cálida, especiada y dulce.', price5:5500, price10:9500, icon:'ti-coffee' },
+  { id:23, name:'Canyon Sky', brand:'Hollister', gender:'hombre', desc:'La frescura de la aventura y la libertad bajo el sol. Fragancia vibrante, limpia y profundamente optimista que captura la energía de un viaje por carretera en verano y la magia de un atardecer en el cañón.', price5:3000, price10:5500, icon:'ti-mountain' },
+  { id:24, name:'#Tobacco Collection', brand:'Zara', gender:'hombre', desc:'La dualidad perfecta entre calidez, misterio y seducción nocturna. Set exclusivo Heritage Selection de Zara con dos de las fragancias masculinas más vendidas. Dos interpretaciones magistrales de la nota de tabaco.', price5:4000, price10:7000, icon:'ti-box' },
+];
+
+let currentFilter = 'all';
+
+function setFilter(f, el) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderGrid();
+}
+
+function formatPrice(n) {
+  return '₡' + n.toLocaleString('es-CR');
+}
+
+function renderGrid() {
+  const q = document.getElementById('search-input').value.toLowerCase().trim();
+  const grid = document.getElementById('product-grid');
+  const filtered = products.filter(p => {
+    const matchFilter = currentFilter === 'all' || p.gender === currentFilter;
+    const matchSearch = !q || p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q);
+    return matchFilter && matchSearch;
+  });
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="no-results"><i class="ti ti-mood-empty" style="font-size:32px; color:var(--color-text-secondary)"></i><p style="margin-top:8px;">Sin resultados para esa búsqueda</p></div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map(p => {
+    const gLabel = p.gender === 'mujer' ? 'Para mujer' : p.gender === 'hombre' ? 'Para hombre' : p.gender === 'unisex' ? 'Unisex' : 'Estuche';
+    const gClass = p.gender === 'mujer' ? 'badge-w' : p.gender === 'hombre' ? 'badge-m' : p.gender === 'unisex' ? 'badge-u' : 'badge-u';
+    const estucheClass = p.gender === 'estuche' ? 'estuche-card' : '';
+    const priceHtml = p.priceSpecial
+      ? `<div class="price-pill"><span>${p.priceSpecial}</span> set completo</div>`
+      : `<div class="price-pill">5ml <span>${formatPrice(p.price5)}</span></div><div class="price-pill">10ml <span>${formatPrice(p.price10)}</span></div>`;
+    return `<div class="card ${estucheClass}" onclick="openModal(${p.id})">
+      <div class="card-img">
+        <i class="ti ${p.icon}" aria-hidden="true"></i>
+        <span class="gender-badge ${gClass}">${gLabel}</span>
+        ${p.gender === 'estuche' ? '<span class="estuche-badge">Set regalo</span>' : ''}
+      </div>
+      <div class="card-body">
+        <div class="card-name">${p.name}</div>
+        <div class="card-brand">${p.brand}</div>
+        <div class="card-prices">${priceHtml}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openModal(id) {
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('m-name').textContent = p.name;
+  document.getElementById('m-brand').textContent = p.brand.toUpperCase();
+  document.getElementById('m-icon').className = 'ti ' + p.icon;
+  const gLabel = p.gender === 'mujer' ? 'Para mujer' : p.gender === 'hombre' ? 'Para hombre' : p.gender === 'unisex' ? 'Unisex' : 'Estuche regalo';
+  const gClass = p.gender === 'mujer' ? 'badge-w' : p.gender === 'hombre' ? 'badge-m' : 'badge-u';
+  const gb = document.getElementById('m-gender-badge');
+  gb.textContent = gLabel; gb.className = 'modal-gender gender-badge ' + gClass;
+  document.getElementById('m-desc').textContent = p.desc;
+  const np = document.getElementById('m-notes');
+  if (p.notes) { np.style.display = 'block'; np.innerHTML = '<strong>Nota</strong>' + p.notes; }
+  else np.style.display = 'none';
+  const mp = document.getElementById('m-prices');
+  if (p.priceSpecial) {
+    mp.innerHTML = `<div class="price-card" style="grid-column:1/-1"><div class="size">Set completo</div><div class="amount">${p.priceSpecial}</div><div class="unit">colones</div></div>`;
+  } else {
+    mp.innerHTML = `<div class="price-card"><div class="size">5 ml</div><div class="amount">${formatPrice(p.price5)}</div><div class="unit">colones</div></div><div class="price-card"><div class="size">10 ml</div><div class="amount">${formatPrice(p.price10)}</div><div class="unit">colones</div></div>`;
+  }
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modal')) document.getElementById('modal').classList.remove('open');
+}
+
+renderGrid();
+</script>
